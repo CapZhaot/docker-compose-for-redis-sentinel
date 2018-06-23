@@ -1,0 +1,65 @@
+version: '3'
+services:
+  redis-master1:
+    image: redis
+    container_name: redis-master1
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf/:/usr/local/etc/redis/"
+    ports:
+      - "6382:6379"
+    command: redis-server /usr/local/etc/redis/redis-master1.conf
+
+  redis-slave1:
+    image: redis
+    container_name: redis-slave1
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf:/usr/local/etc/redis/"
+    ports:
+      - "6380:6379"
+    command: redis-server /usr/local/etc/redis/redis-slave1.conf --slaveof redis-master1 6379
+    links:
+      - redis-master1
+
+  redis-slave2:
+    image: redis
+    container_name: redis-slave2
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf:/usr/local/etc/redis/"
+    ports:
+      - "6381:6379"
+    command: redis-server /usr/local/etc/redis/redis-slave2.conf --slaveof redis-master1 6379
+    links:
+      - redis-master1
+
+  redis-sentinel1:
+    image: redis
+    container_name: redis-sentinel1
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf:/usr/local/etc/redis/"
+    ports:
+      - "26383:26379"
+    command: redis-sentinel /usr/local/etc/redis/sentinel1.conf
+    links:
+      - redis-master1
+
+  redis-sentinel2:
+    image: redis
+    container_name: redis-sentinel2
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf:/usr/local/etc/redis/"
+    ports:
+      - "26384:26379"
+    command: redis-sentinel /usr/local/etc/redis/sentinel2.conf
+    links:
+      - redis-master1
+
+  redis-sentinel3:
+    image: redis
+    container_name: redis-sentinel3
+    volumes:
+       - "/Users/jarviszhao/docker/redis/conf:/usr/local/etc/redis/"
+    ports:
+      - "26385:26379"
+    command: redis-sentinel /usr/local/etc/redis/sentinel3.conf
+    links:
+      - redis-master1
